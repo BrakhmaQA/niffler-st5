@@ -1,61 +1,59 @@
 package guru.qa.niffler.jupiter.extension;
 
-import guru.qa.niffler.api.SpendApi;
+import guru.qa.niffler.data.entity.CategoryEntity;
+import guru.qa.niffler.data.repository.SpendRepository;
 import guru.qa.niffler.jupiter.annotation.Category;
+import guru.qa.niffler.jupiter.annotation.GenerateCategory;
 import guru.qa.niffler.model.CategoryJson;
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
+import org.checkerframework.checker.units.qual.C;
+import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.platform.commons.support.AnnotationSupport;
-import retrofit2.Retrofit;
-import retrofit2.converter.jackson.JacksonConverterFactory;
 
-import java.io.IOException;
-import java.util.Objects;
-
-import static okhttp3.logging.HttpLoggingInterceptor.Level.BODY;
-
-public class CategoryExtension implements BeforeEachCallback {
-
+public abstract class CategoryExtension implements BeforeEachCallback, AfterEachCallback {
     public static final ExtensionContext.Namespace NAMESPACE
             = ExtensionContext.Namespace.create(CategoryExtension.class);
 
-    private static final OkHttpClient okHttpClient = new OkHttpClient.Builder()
-            .addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(BODY))
-            .build();
-
-    private final Retrofit retrofit = new Retrofit.Builder()
-            .client(okHttpClient)
-            .baseUrl("http://127.0.0.1:8093/")
-            .addConverterFactory(JacksonConverterFactory.create())
-            .build();
+    private final SpendRepository spendRepository = SpendRepository.getInstance();
 
     @Override
-    public void beforeEach(ExtensionContext extensionContext) throws Exception {
-        SpendApi spendApi = retrofit.create(SpendApi.class);
-
+    public void beforeEach(ExtensionContext extensionContext) {
         AnnotationSupport.findAnnotation(
                 extensionContext.getRequiredTestMethod(),
                 Category.class
         ).ifPresent(
                 cat -> {
-                    CategoryJson categoryJson = new CategoryJson(
+                    /*CategoryEntity category = new CategoryEntity();
+                    category.setCategory(cat.category());
+                    category.setUsername(cat.username());
+
+                    spendRepository.createCategory(category);*/
+
+                    CategoryJson category = createCategory(new CategoryJson(
                             null,
                             cat.category(),
                             cat.username()
+                    ));
+
+                    spendRepository.createCategory(CategoryEntity.fromJson(category));
+
+                    extensionContext.getStore(NAMESPACE).put(
+//                            extensionContext.getUniqueId(), CategoryJson.fromEntity(category)
+                            extensionContext.getUniqueId(), category
                     );
-                    try {
-                        CategoryJson result = Objects.requireNonNull(
-                                spendApi.createCategory(categoryJson).execute().body()
-                        );
-                        extensionContext.getStore(NAMESPACE).put(
-                                extensionContext.getUniqueId(), result
-                        );
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
                 }
         );
     }
+
+    @Override
+    public void afterEach(ExtensionContext context) {
+        CategoryJson categoryJson = context.getStore(NAMESPACE).get(context.getUniqueId(), CategoryJson.class);
+//        spendRepository.removeCategory(CategoryEntity.fromJson(categoryJson));
+        removeCategory(categoryJson);
+    }
+
+    protected abstract CategoryJson createCategory(CategoryJson category);
+
+    protected abstract void removeCategory(CategoryJson category);
 }
