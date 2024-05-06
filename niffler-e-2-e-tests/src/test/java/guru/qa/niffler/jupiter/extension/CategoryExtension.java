@@ -11,49 +11,17 @@ import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.platform.commons.support.AnnotationSupport;
 
-public abstract class CategoryExtension implements BeforeEachCallback, AfterEachCallback {
-    public static final ExtensionContext.Namespace NAMESPACE
-            = ExtensionContext.Namespace.create(CategoryExtension.class);
+public class CategoryExtension extends AbstractCategoryExtension{
 
     private final SpendRepository spendRepository = SpendRepository.getInstance();
 
     @Override
-    public void beforeEach(ExtensionContext extensionContext) {
-        AnnotationSupport.findAnnotation(
-                extensionContext.getRequiredTestMethod(),
-                Category.class
-        ).ifPresent(
-                cat -> {
-                    /*CategoryEntity category = new CategoryEntity();
-                    category.setCategory(cat.category());
-                    category.setUsername(cat.username());
-
-                    spendRepository.createCategory(category);*/
-
-                    CategoryJson category = createCategory(new CategoryJson(
-                            null,
-                            cat.category(),
-                            cat.username()
-                    ));
-
-                    spendRepository.createCategory(CategoryEntity.fromJson(category));
-
-                    extensionContext.getStore(NAMESPACE).put(
-//                            extensionContext.getUniqueId(), CategoryJson.fromEntity(category)
-                            extensionContext.getUniqueId(), category
-                    );
-                }
-        );
+    protected CategoryJson createCategory(CategoryJson category) {
+        return null;
     }
 
     @Override
-    public void afterEach(ExtensionContext context) {
-        CategoryJson categoryJson = context.getStore(NAMESPACE).get(context.getUniqueId(), CategoryJson.class);
-//        spendRepository.removeCategory(CategoryEntity.fromJson(categoryJson));
-        removeCategory(categoryJson);
+    protected void removeCategory(CategoryJson category) {
+
     }
-
-    protected abstract CategoryJson createCategory(CategoryJson category);
-
-    protected abstract void removeCategory(CategoryJson category);
 }
