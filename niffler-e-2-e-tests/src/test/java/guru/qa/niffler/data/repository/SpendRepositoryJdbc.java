@@ -95,11 +95,6 @@ public class SpendRepositoryJdbc implements SpendRepository {
                 }
             }
 
-            CategoryEntity category = new CategoryEntity();
-            category.setId(categoryId);
-            category.setCategory(spend.getCategory().getCategory());
-            category.setUsername(spend.getCategory().getUsername());
-
             spendPs.setString(1, spend.getUsername());
             spendPs.setDate(2, new Date(System.currentTimeMillis()));
             spendPs.setString(3, String.valueOf(spend.getCurrency()));

@@ -1,6 +1,5 @@
 package guru.qa.niffler.jupiter.extension;
 
-import guru.qa.niffler.data.entity.CategoryEntity;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.model.CategoryJson;
 import org.junit.jupiter.api.extension.*;
@@ -9,7 +8,7 @@ import org.junit.platform.commons.support.AnnotationSupport;
 public abstract class AbstractCategoryExtension implements BeforeEachCallback, AfterEachCallback, ParameterResolver {
 
     public static final ExtensionContext.Namespace NAMESPACE
-            = ExtensionContext.Namespace.create(CategoryExtension.class);
+            = ExtensionContext.Namespace.create(AbstractCategoryExtension.class);
 
     @Override
     public void beforeEach(ExtensionContext extensionContext) {
@@ -18,10 +17,8 @@ public abstract class AbstractCategoryExtension implements BeforeEachCallback, A
                 Category.class
         ).ifPresent(
                 category -> {
-
-                    extensionContext.getStore(NAMESPACE).put(
-                            extensionContext.getUniqueId(), createCategory(category)
-                    );
+                    extensionContext.getStore(NAMESPACE)
+                            .put(extensionContext.getUniqueId(), createCategory(category));
                 }
         );
     }
@@ -33,7 +30,7 @@ public abstract class AbstractCategoryExtension implements BeforeEachCallback, A
     }
 
     @Override
-    public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+    public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) {
         return parameterContext
                 .getParameter()
                 .getType()
@@ -41,11 +38,11 @@ public abstract class AbstractCategoryExtension implements BeforeEachCallback, A
     }
 
     @Override
-    public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        return extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId());
+    public CategoryJson resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) {
+        return (CategoryJson) extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId());
     }
 
-    protected abstract CategoryJson createCategory(CategoryJson category);
+    protected abstract CategoryJson createCategory(Category category);
 
     protected abstract void removeCategory(CategoryJson category);
 }

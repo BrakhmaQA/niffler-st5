@@ -1,7 +1,49 @@
 package guru.qa.niffler.jupiter.extension;
 
-import org.junit.jupiter.api.extension.AfterEachCallback;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
+import guru.qa.niffler.jupiter.annotation.Spend;
+import guru.qa.niffler.model.SpendJson;
+import org.junit.jupiter.api.extension.*;
+import org.junit.platform.commons.support.AnnotationSupport;
 
-public abstract class AbstractSpendExtension implements BeforeEachCallback, AfterEachCallback {
+public abstract class AbstractSpendExtension implements BeforeEachCallback, AfterEachCallback, ParameterResolver {
+
+    public static final ExtensionContext.Namespace NAMESPACE
+            = ExtensionContext.Namespace.create(AbstractSpendExtension.class);
+
+
+    @Override
+    public void beforeEach(ExtensionContext extensionContext) {
+        AnnotationSupport.findAnnotation(
+                extensionContext.getRequiredTestMethod(),
+                Spend.class
+        ).ifPresent(
+                spend -> {
+                    extensionContext.getStore(NAMESPACE)
+                            .put(extensionContext.getUniqueId(), createSpend(spend));
+                }
+        );
+    }
+
+    @Override
+    public void afterEach(ExtensionContext context) {
+        SpendJson spendJson = context.getStore(NAMESPACE).get(context.getUniqueId(), SpendJson.class);
+        removeSpend(spendJson);
+    }
+
+    @Override
+    public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) {
+        return parameterContext
+                .getParameter()
+                .getType()
+                .isAssignableFrom(SpendJson.class);
+    }
+
+    @Override
+    public SpendJson resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) {
+        return (SpendJson) extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId());
+    }
+
+    protected abstract SpendJson createSpend(Spend spend);
+
+    protected abstract void removeSpend(SpendJson spend);
 }
