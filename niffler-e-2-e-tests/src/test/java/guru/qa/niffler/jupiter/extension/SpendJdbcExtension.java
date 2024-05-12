@@ -13,23 +13,19 @@ public class SpendJdbcExtension extends AbstractSpendExtension {
 
     @Override
     protected SpendJson createSpend(Spend spend) {
-        SpendJson spendJson = new SpendJson(
-                null,
-                new Date(),
-                spend.category(),
-                spend.currency(),
-                spend.amount(),
-                spend.description(),
-                spend.username()
-        );
+        SpendEntity spendEntity = new SpendEntity();
+        spendEntity.setSpendDate(new Date());
+        spendEntity.getCategory().setCategory(spend.category());
+        spendEntity.setCurrency(spend.currency());
+        spendEntity.setAmount(spend.amount());
+        spendEntity.setDescription(spend.description());
+        spendEntity.setUsername(spend.username());
 
-        return spendJson;
+        return SpendJson.fromEntity(spendRepository.createSpend(spendEntity));
     }
 
     @Override
     protected void removeSpend(SpendJson spend) {
-        SpendJson spendJson = new SpendJson(spend.id(), spend.spendDate(), spend.category(),
-                spend.currency(), spend.amount(), spend.description(), spend.username());
-        spendRepository.removeSpend(SpendEntity.fromJson(spendJson));
+        spendRepository.removeSpend(SpendEntity.fromJson(spend));
     }
 }

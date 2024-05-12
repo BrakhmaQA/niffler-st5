@@ -11,18 +11,15 @@ public class CategoryJdbcExtension extends AbstractCategoryExtension {
 
     @Override
     protected CategoryJson createCategory(Category category) {
-        CategoryJson categoryJson = new CategoryJson(
-                null,
-                category.category(),
-                category.username()
-        );
+        CategoryEntity categoryEntity = new CategoryEntity();
+        categoryEntity.setCategory(category.category());
+        categoryEntity.setUsername(category.username());
 
-        return categoryJson;
+        return CategoryJson.fromEntity(spendRepository.createCategory(categoryEntity));
     }
 
     @Override
     protected void removeCategory(CategoryJson category) {
-        CategoryJson categoryJson = new CategoryJson(category.id(), category.category(), category.username());
-        spendRepository.removeCategory(CategoryEntity.fromJson(categoryJson));
+        spendRepository.removeCategory(CategoryEntity.fromJson(category));
     }
 }
