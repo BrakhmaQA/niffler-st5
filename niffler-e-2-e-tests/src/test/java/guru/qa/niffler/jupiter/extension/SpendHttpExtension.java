@@ -34,6 +34,7 @@ public class SpendHttpExtension extends AbstractSpendExtension {
                 spend.description(),
                 spend.username()
         );
+
         try {
             return spendApi.createSpend(spendJson).execute().body();
         } catch (IOException e) {
