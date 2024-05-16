@@ -75,32 +75,17 @@ public class SpendRepositoryJdbc implements SpendRepository {
     @Override
     public SpendEntity createSpend(SpendEntity spend) {
         try (Connection conn = spendDataSource.getConnection();
-             PreparedStatement categoryPs = conn.prepareStatement(
-                     "INSERT INTO \"category\" (category, username) VALUES (?, ?)",
-                     PreparedStatement.RETURN_GENERATED_KEYS);
              PreparedStatement spendPs = conn.prepareStatement(
                      "INSERT INTO \"spend\" (username, spend_date, currency, amount, description, category_id) VALUES (?, ?, ?, ?, ?, ?)",
                      PreparedStatement.RETURN_GENERATED_KEYS
              )) {
-            categoryPs.setString(1, spend.getCategory().getCategory());
-            categoryPs.setString(2, spend.getCategory().getUsername());
-            categoryPs.executeUpdate();
-
-            UUID categoryId;
-            try (ResultSet keys = categoryPs.getGeneratedKeys()) {
-                if (keys.next()) {
-                    categoryId = UUID.fromString(keys.getString("id"));
-                } else {
-                    throw new IllegalStateException("Can`t find id");
-                }
-            }
 
             spendPs.setString(1, spend.getUsername());
             spendPs.setDate(2, new Date(System.currentTimeMillis()));
             spendPs.setString(3, String.valueOf(spend.getCurrency()));
             spendPs.setDouble(4, spend.getAmount());
             spendPs.setString(5, spend.getDescription());
-            spendPs.setObject(6, categoryId);
+            spendPs.setObject(6, spend.getCategory().getId());
             spendPs.executeUpdate();
 
             UUID spendId;
@@ -134,6 +119,7 @@ public class SpendRepositoryJdbc implements SpendRepository {
             ps.setObject(6, spend.getCategory().getId());
             ps.setObject(7, spend.getId());
             ps.executeUpdate();
+
             return spend;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -145,14 +131,9 @@ public class SpendRepositoryJdbc implements SpendRepository {
         try (Connection conn = spendDataSource.getConnection();
              PreparedStatement spendPs = conn.prepareStatement(
                      "DELETE FROM \"spend\" WHERE id = ?");
-             PreparedStatement categoryPs = conn.prepareStatement(
-                     "DELETE FROM \"category\" WHERE id = ?")
         ) {
             spendPs.setObject(1, spend.getId());
             spendPs.executeUpdate();
-
-            categoryPs.setObject(1, spend.getCategory().getId());
-            categoryPs.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
