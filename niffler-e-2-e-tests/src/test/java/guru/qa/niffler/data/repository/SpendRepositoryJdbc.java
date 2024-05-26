@@ -4,9 +4,12 @@ import guru.qa.niffler.data.DataBase;
 import guru.qa.niffler.data.entity.CategoryEntity;
 import guru.qa.niffler.data.entity.SpendEntity;
 import guru.qa.niffler.data.jdbc.DataSourceProvider;
+import guru.qa.niffler.model.CurrencyValues;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class SpendRepositoryJdbc implements SpendRepository {
@@ -109,8 +112,9 @@ public class SpendRepositoryJdbc implements SpendRepository {
     @Override
     public SpendEntity editSpend(SpendEntity spend) {
         try (Connection conn = spendDataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement("UPDATE \"spend\" SET username = ?, currency = ?, " +
-                     "spend_date = ?, amount = ?, description = ?, category_id = ? WHERE id = ?")) {
+             PreparedStatement ps = conn.prepareStatement(
+                     "UPDATE \"spend\" SET username = ?, currency = ?, " +
+                             "spend_date = ?, amount = ?, description = ?, category_id = ? WHERE id = ?")) {
             ps.setString(1, spend.getUsername());
             ps.setString(2, String.valueOf(spend.getCurrency()));
             ps.setDate(3, new Date(System.currentTimeMillis()));
@@ -134,6 +138,38 @@ public class SpendRepositoryJdbc implements SpendRepository {
         ) {
             spendPs.setObject(1, spend.getId());
             spendPs.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<SpendEntity> findAllByUsername(String username) {
+        try (Connection conn = spendDataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(
+                     "SELECT * FROM \"spend\" where username = ?")) {
+            ps.setString(1, username);
+            ps.execute();
+
+            List<SpendEntity> spendList = new ArrayList<>();
+            SpendEntity spend;
+            try (ResultSet resultSet = ps.getResultSet()) {
+                while (resultSet.next()) {
+                    spend = new SpendEntity();
+
+                    spend.setId(resultSet.getObject("id", UUID.class));
+                    spend.setUsername(resultSet.getString("username"));
+                    spend.setCurrency(CurrencyValues.valueOf(resultSet.getString("currency")));
+                    spend.setSpendDate(resultSet.getDate("spend_date"));
+                    spend.setAmount(resultSet.getDouble("amount"));
+                    spend.setDescription(resultSet.getString("description"));
+                    spend.getCategory().setId(resultSet.getObject("id", UUID.class));
+
+                    spendList.add(spend);
+                }
+            }
+
+            return spendList;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
