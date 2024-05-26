@@ -65,6 +65,7 @@ public class UserRepositoryJdbc implements UserRepository {
                 }
                 authorityPs.executeBatch();
                 conn.commit();
+
                 return user;
             } catch (SQLException e) {
                 conn.rollback();
@@ -148,6 +149,7 @@ public class UserRepositoryJdbc implements UserRepository {
                 }
                 userAuthorityPs.executeBatch();
                 conn.commit();
+
                 return user;
             } catch (Exception e) {
                 conn.rollback();

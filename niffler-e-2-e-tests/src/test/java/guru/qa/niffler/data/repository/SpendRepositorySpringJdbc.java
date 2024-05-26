@@ -28,6 +28,7 @@ public class SpendRepositorySpringJdbc implements SpendRepository {
                     );
                     ps.setString(1, category.getCategory());
                     ps.setString(2, category.getUsername());
+
                     return ps;
                 }, kh
         );
