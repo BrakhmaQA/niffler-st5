@@ -1,8 +1,7 @@
 package guru.qa.niffler.data.repository;
 
 import guru.qa.niffler.data.DataBase;
-import guru.qa.niffler.data.entity.Authority;
-import guru.qa.niffler.data.entity.SpendEntity;
+import guru.qa.niffler.data.entity.AuthorityEntity;
 import guru.qa.niffler.data.entity.UserAuthEntity;
 import guru.qa.niffler.data.entity.UserEntity;
 import guru.qa.niffler.data.jdbc.DataSourceProvider;
@@ -14,7 +13,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -57,12 +55,13 @@ public class UserRepositoryJdbc implements UserRepository {
                 }
                 user.setId(generatedUserId);
 
-                for (Authority a : Authority.values()) {
+                for (AuthorityEntity authorityEntity : user.getAuthorities()) {
                     authorityPs.setObject(1, generatedUserId);
-                    authorityPs.setString(2, a.name());
+                    authorityPs.setString(2, authorityEntity.getAuthority().name());
                     authorityPs.addBatch();
                     authorityPs.clearParameters();
                 }
+
                 authorityPs.executeBatch();
                 conn.commit();
 
@@ -104,6 +103,7 @@ public class UserRepositoryJdbc implements UserRepository {
                 }
             }
             user.setId(generatedUserId);
+
             return user;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -119,8 +119,10 @@ public class UserRepositoryJdbc implements UserRepository {
                     "UPDATE \"user\" SET password = ?, enabled = ?, account_non_expired = ?, account_non_locked = ?, credentials_non_expired = ?" +
                             " WHERE username = ?",
                     PreparedStatement.RETURN_GENERATED_KEYS
-            ); PreparedStatement userAuthorityPs = conn.prepareStatement(
-                    "UPDATE \"authority\" SET authority = ? WHERE user_id = ? AND authority = ?")) {
+            ); PreparedStatement deleteUserAuthorityPs = conn.prepareStatement(
+                    "DELETE FROM \"authority\" WHERE user_id = ?"
+            );                 PreparedStatement userAuthorityPs = conn.prepareStatement(
+                         "UPDATE \"authority\" SET authority = ? WHERE user_id = ? AND authority = ?")) {
 
                 userPs.setString(1, pe.encode(user.getPassword()));
                 userPs.setBoolean(2, user.getEnabled());
@@ -129,6 +131,9 @@ public class UserRepositoryJdbc implements UserRepository {
                 userPs.setBoolean(5, user.getCredentialsNonExpired());
                 userPs.setString(6, user.getUsername());
                 userPs.executeUpdate();
+
+                deleteUserAuthorityPs.setObject(1, user.getId());
+                deleteUserAuthorityPs.executeUpdate();
 
                 UUID generatedUserId;
                 try (ResultSet resultSet = userPs.getGeneratedKeys()) {
@@ -140,10 +145,10 @@ public class UserRepositoryJdbc implements UserRepository {
                 }
                 user.setId(generatedUserId);
 
-                for (Authority authority : Authority.values()) {
-                    userAuthorityPs.setString(1, authority.name());
+                for (AuthorityEntity authorityEntity : user.getAuthorities()) {
+                    userAuthorityPs.setString(1, authorityEntity.getAuthority().name());
                     userAuthorityPs.setObject(2, generatedUserId);
-                    userAuthorityPs.setString(3, authority.name());
+                    userAuthorityPs.setString(3, authorityEntity.getAuthority().name());
                     userAuthorityPs.addBatch();
                     userAuthorityPs.clearParameters();
                 }

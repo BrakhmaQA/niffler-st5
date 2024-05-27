@@ -2,6 +2,7 @@ package guru.qa.niffler.data.repository;
 
 import guru.qa.niffler.data.DataBase;
 import guru.qa.niffler.data.entity.Authority;
+import guru.qa.niffler.data.entity.AuthorityEntity;
 import guru.qa.niffler.data.entity.UserAuthEntity;
 import guru.qa.niffler.data.entity.UserEntity;
 import guru.qa.niffler.data.jdbc.DataSourceProvider;
@@ -61,7 +62,7 @@ public class UserRepositorySpringJdbc implements UserRepository {
                         @Override
                         public void setValues(PreparedStatement ps, int i) throws SQLException {
                             ps.setObject(1, user.getId());
-                            ps.setString(2, Authority.values()[i].name());
+                            ps.setString(2, user.getAuthorities().get(i).getAuthority().name());
                         }
 
                         @Override
@@ -78,6 +79,7 @@ public class UserRepositorySpringJdbc implements UserRepository {
     @Override
     public UserEntity createUserInUserdata(UserEntity user) {
         KeyHolder kh = new GeneratedKeyHolder();
+
         udJdbcTemplate.update(con -> {
                     PreparedStatement ps = con.prepareStatement(
                             "INSERT INTO \"user\" (" +
@@ -121,8 +123,8 @@ public class UserRepositorySpringJdbc implements UserRepository {
                     userPs.setString(6, user.getUsername());
                     userPs.executeUpdate();
 
-                    for (Authority authority : Authority.values()) {
-                        userAuthorityPs.setString(1, authority.name());
+                    for (AuthorityEntity authorityEntity : user.getAuthorities()) {
+                        userAuthorityPs.setString(1, authorityEntity.getAuthority().name());
                         userAuthorityPs.setObject(2, kh.getKeys().get("id"));
                         userAuthorityPs.addBatch();
                         userAuthorityPs.clearParameters();

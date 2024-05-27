@@ -8,11 +8,14 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface UserRepository {
+
     static UserRepository getInstance() {
-        if ("jdbc".equals(System.getProperty("repo"))) {
+        String repo = System.getProperty("repo");
+
+        if ("jdbc".equals(repo)) {
             return new UserRepositoryJdbc();
         }
-        if ("spring".equals(System.getProperty("repo"))) {
+        if ("spring".equals(repo)) {
             return new UserRepositorySpringJdbc();
         }
 

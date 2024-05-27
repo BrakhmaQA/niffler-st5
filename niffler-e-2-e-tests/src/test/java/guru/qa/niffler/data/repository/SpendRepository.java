@@ -6,8 +6,14 @@ import guru.qa.niffler.data.entity.SpendEntity;
 import java.util.List;
 
 public interface SpendRepository {
+
     static SpendRepository getInstance() {
-        if ("jdbc".equals(System.getProperty("repo"))) {
+        String repo = System.getProperty("repo");
+
+        if ("jdbc".equals(repo)) {
+            return new SpendRepositoryJdbc();
+        }
+        if ("spring".equals(repo)) {
             return new SpendRepositoryJdbc();
         }
 
