@@ -1,6 +1,7 @@
 package guru.qa.niffler.data.repository;
 
 import guru.qa.niffler.data.DataBase;
+import guru.qa.niffler.data.entity.Authority;
 import guru.qa.niffler.data.entity.AuthorityEntity;
 import guru.qa.niffler.data.entity.UserAuthEntity;
 import guru.qa.niffler.data.entity.UserEntity;
@@ -13,6 +14,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -121,8 +124,8 @@ public class UserRepositoryJdbc implements UserRepository {
                     PreparedStatement.RETURN_GENERATED_KEYS
             ); PreparedStatement deleteUserAuthorityPs = conn.prepareStatement(
                     "DELETE FROM \"authority\" WHERE user_id = ?"
-            );                 PreparedStatement userAuthorityPs = conn.prepareStatement(
-                         "UPDATE \"authority\" SET authority = ? WHERE user_id = ? AND authority = ?")) {
+            ); PreparedStatement userAuthorityPs = conn.prepareStatement(
+                    "UPDATE \"authority\" SET authority = ? WHERE user_id = ? AND authority = ?")) {
 
                 userPs.setString(1, pe.encode(user.getPassword()));
                 userPs.setBoolean(2, user.getEnabled());
@@ -216,5 +219,80 @@ public class UserRepositoryJdbc implements UserRepository {
         }
 
         return Optional.of(user);
+    }
+
+    @Override
+    public UserAuthEntity findUserFromAuthByUsername(String username) {
+        try (Connection conn = authDataSource.getConnection();
+             PreparedStatement userPs = conn.prepareStatement(
+                     "SELECT * FROM \"user\" WHERE username = ?"
+             )) {
+            userPs.setString(1, username);
+
+            UserAuthEntity userAuthEntity = new UserAuthEntity();
+            try (ResultSet resultSet = userPs.executeQuery()) {
+                while (resultSet.next()) {
+                    userAuthEntity.setId(UUID.fromString(resultSet.getString("id")));
+                    userAuthEntity.setUsername(resultSet.getString("username"));
+                    userAuthEntity.setPassword(resultSet.getString("password"));
+                    userAuthEntity.setEnabled(resultSet.getBoolean("enabled"));
+                    userAuthEntity.setAccountNonExpired(resultSet.getBoolean("account_non_expired"));
+                    userAuthEntity.setAccountNonLocked(resultSet.getBoolean("account_non_locked"));
+                    userAuthEntity.setCredentialsNonExpired(resultSet.getBoolean("credentials_non_expired"));
+
+                    try (PreparedStatement authorityPs = conn.prepareStatement(
+                            "SELECT * FROM \"authority\" WHERE user_id = ?"
+                    )) {
+                        authorityPs.setObject(1, userAuthEntity.getId());
+
+                        List<AuthorityEntity> authorityEntities = new ArrayList<>();
+                        try (ResultSet authorityResultSet = authorityPs.executeQuery()) {
+                            while (authorityResultSet.next()) {
+                                AuthorityEntity authority = new AuthorityEntity();
+                                authority.setId(UUID.fromString(authorityResultSet.getString("id")));
+                                authority.setAuthority(Authority.valueOf(authorityResultSet.getString("authority")));
+                                authority.setUser(userAuthEntity);
+                                authorityEntities.add(authority);
+                            }
+
+                            userAuthEntity.setAuthorities(authorityEntities);
+                        }
+                    }
+
+                    return userAuthEntity;
+                }
+                throw new SQLException(String.format("User with username [%s] isn't found or exist", username));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public UserEntity findUserFromUserdataByUsername(String username) {
+        try (Connection conn = udDataSource.getConnection();
+             PreparedStatement userPs = conn.prepareStatement(
+                     "SELECT * FROM \"user\" WHERE username = ?"
+             )) {
+            userPs.setString(1, username);
+
+            try (ResultSet resultSet = userPs.executeQuery()) {
+                while (resultSet.next()) {
+                    UserEntity user = new UserEntity();
+                    user.setId(UUID.fromString(resultSet.getString("id")));
+                    user.setUsername(resultSet.getString("username"));
+                    user.setCurrency(CurrencyValues.valueOf(resultSet.getString("currency")));
+                    user.setFirstname(resultSet.getString("firstname"));
+                    user.setSurname(resultSet.getString("surname"));
+                    user.setPhoto(resultSet.getBytes("photo"));
+                    user.setPhotoSmall(resultSet.getBytes("photo_small"));
+
+                    return user;
+                }
+                throw new SQLException(String.format("User with username [%s] isn't found or exist", username));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
