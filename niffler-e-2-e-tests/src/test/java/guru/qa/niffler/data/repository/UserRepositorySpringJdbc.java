@@ -6,6 +6,8 @@ import guru.qa.niffler.data.entity.AuthorityEntity;
 import guru.qa.niffler.data.entity.UserAuthEntity;
 import guru.qa.niffler.data.entity.UserEntity;
 import guru.qa.niffler.data.jdbc.DataSourceProvider;
+import guru.qa.niffler.data.sjdbc.AuthorityEntityRowMapper;
+import guru.qa.niffler.data.sjdbc.UserAuthEntityRowMapper;
 import guru.qa.niffler.data.sjdbc.UserEntityRowMapper;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
@@ -19,6 +21,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -164,5 +167,33 @@ public class UserRepositorySpringJdbc implements UserRepository {
         } catch (DataRetrievalFailureException e) {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public UserAuthEntity findUserFromAuthByUsername(String username) {
+        UserAuthEntity userAuthEntity = authJdbcTemplate.queryForObject(
+                "SELECT * FROM \"user\" WHERE username = ?",
+                UserAuthEntityRowMapper.instance,
+                username
+        );
+
+        List<AuthorityEntity> authorityEntities = authJdbcTemplate.query(
+                "SELECT * FROM \"authority\" WHERE user_id = ?",
+                AuthorityEntityRowMapper.instance,
+                userAuthEntity.getId()
+        );
+
+        userAuthEntity.setAuthorities(authorityEntities);
+
+        return userAuthEntity;
+    }
+
+    @Override
+    public UserEntity findUserFromUserdataByUsername(String username) {
+        return udJdbcTemplate.queryForObject(
+                "SELECT * FROM \"user\" WHERE username = ?",
+                UserEntityRowMapper.instance,
+                username
+        );
     }
 }

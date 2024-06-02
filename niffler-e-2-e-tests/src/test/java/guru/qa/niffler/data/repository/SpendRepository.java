@@ -33,4 +33,6 @@ public interface SpendRepository {
     void removeSpend(SpendEntity spend);
 
     List<SpendEntity> findAllByUsername(String username);
+
+    CategoryEntity findCategoryByName(String category);
 }

@@ -4,6 +4,7 @@ import guru.qa.niffler.data.DataBase;
 import guru.qa.niffler.data.entity.CategoryEntity;
 import guru.qa.niffler.data.entity.SpendEntity;
 import guru.qa.niffler.data.jdbc.DataSourceProvider;
+import guru.qa.niffler.data.sjdbc.CategoryEntityRowMapper;
 import guru.qa.niffler.data.sjdbc.SpendEntityRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -112,5 +113,14 @@ public class SpendRepositorySpringJdbc implements SpendRepository {
                 SpendEntityRowMapper.instance,
                 username
         );
+    }
+
+    @Override
+    public CategoryEntity findCategoryByName(String category) {
+        return spendJdbcTemplate.query(
+                "SELECT * FROM \"category\" WHERE category = ?",
+                CategoryEntityRowMapper.instance,
+                category
+        ).getFirst();
     }
 }

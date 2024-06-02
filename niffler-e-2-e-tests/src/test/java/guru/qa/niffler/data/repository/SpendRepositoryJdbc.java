@@ -174,4 +174,29 @@ public class SpendRepositoryJdbc implements SpendRepository {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public CategoryEntity findCategoryByName(String category) {
+        CategoryEntity categoryEntity;
+
+        try (Connection conn = spendDataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(
+                     "SELECT * FROM \"category\" where category = ?")) {
+            ps.setString(1, category);
+            ps.execute();
+
+            categoryEntity = new CategoryEntity();
+            try (ResultSet resultSet = ps.getResultSet()) {
+                while (resultSet.next()) {
+                    categoryEntity.setId(UUID.fromString(resultSet.getString("id")));
+                    categoryEntity.setCategory(resultSet.getString("category"));
+                    categoryEntity.setUsername(resultSet.getString("username"));
+                }
+            }
+
+            return categoryEntity;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
