@@ -116,11 +116,11 @@ public class SpendRepositorySpringJdbc implements SpendRepository {
     }
 
     @Override
-    public CategoryEntity findCategoryByName(String category) {
+    public List<CategoryEntity> findCategoryByName(String category) {
         return spendJdbcTemplate.query(
                 "SELECT * FROM \"category\" WHERE category = ?",
                 CategoryEntityRowMapper.instance,
                 category
-        ).getFirst();
+        );
     }
 }

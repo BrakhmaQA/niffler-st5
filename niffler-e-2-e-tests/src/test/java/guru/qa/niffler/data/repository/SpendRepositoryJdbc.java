@@ -176,8 +176,8 @@ public class SpendRepositoryJdbc implements SpendRepository {
     }
 
     @Override
-    public CategoryEntity findCategoryByName(String category) {
-        CategoryEntity categoryEntity;
+    public List<CategoryEntity> findCategoryByName(String category) {
+
 
         try (Connection conn = spendDataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(
@@ -185,16 +185,20 @@ public class SpendRepositoryJdbc implements SpendRepository {
             ps.setString(1, category);
             ps.execute();
 
-            categoryEntity = new CategoryEntity();
+            List<CategoryEntity> categoryEntities = new ArrayList<>();
             try (ResultSet resultSet = ps.getResultSet()) {
                 while (resultSet.next()) {
+                    CategoryEntity  categoryEntity = new CategoryEntity();
+
                     categoryEntity.setId(UUID.fromString(resultSet.getString("id")));
                     categoryEntity.setCategory(resultSet.getString("category"));
                     categoryEntity.setUsername(resultSet.getString("username"));
+
+                    categoryEntities.add(categoryEntity);
                 }
             }
 
-            return categoryEntity;
+            return categoryEntities;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

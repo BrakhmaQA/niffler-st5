@@ -34,5 +34,5 @@ public interface SpendRepository {
 
     List<SpendEntity> findAllByUsername(String username);
 
-    CategoryEntity findCategoryByName(String category);
+    List<CategoryEntity> findCategoryByName(String category);
 }

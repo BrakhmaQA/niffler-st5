@@ -50,15 +50,14 @@ public class SpendRepositoryHibernate implements SpendRepository {
 
     @Override
     public List<SpendEntity> findAllByUsername(String username) {
-        return List.of(
-                spendEm.createQuery("SELECT * FROM \"spend\" where username = :username", SpendEntity.class)
+        return (List<SpendEntity>) spendEm.createQuery("SELECT * FROM \"spend\" where username = :username", SpendEntity.class)
                 .setParameter("username", username)
-                .getSingleResult());
+                .getSingleResult();
     }
 
     @Override
-    public CategoryEntity findCategoryByName(String category) {
-        return spendEm.createQuery("SELECT * FROM \"category\" WHERE category = :category", CategoryEntity.class)
+    public List<CategoryEntity> findCategoryByName(String category) {
+        return (List<CategoryEntity>) spendEm.createQuery("SELECT * FROM \"category\" WHERE category = :category", CategoryEntity.class)
                 .setParameter("category", category)
                 .getSingleResult();
     }
