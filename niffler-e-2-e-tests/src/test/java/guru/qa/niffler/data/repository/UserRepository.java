@@ -18,6 +18,9 @@ public interface UserRepository {
         if ("spring".equals(repo)) {
             return new UserRepositorySpringJdbc();
         }
+        if ("hibernate".equals(repo)) {
+            return new UserRepositoryHibernate();
+        }
 
         return new UserRepositoryJdbc();
     }

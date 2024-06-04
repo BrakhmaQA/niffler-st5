@@ -14,7 +14,10 @@ public interface SpendRepository {
             return new SpendRepositoryJdbc();
         }
         if ("spring".equals(repo)) {
-            return new SpendRepositoryJdbc();
+            return new SpendRepositorySpringJdbc();
+        }
+        if ("hibernate".equals(repo)) {
+            return new SpendRepositoryHibernate();
         }
 
         return new SpendRepositoryJdbc();
