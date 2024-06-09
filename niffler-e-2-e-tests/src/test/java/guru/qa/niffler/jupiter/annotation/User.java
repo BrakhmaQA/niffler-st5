@@ -5,7 +5,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface TestUser {
+@Target(ElementType.PARAMETER)
+public @interface User {
+
+    Selector selector();
+
+    enum Selector {
+        INVITATION_SENT, INVITATION_RECEIVED, WITH_FRIENDS, ACCEPTED_FRIENDS
+    }
 }

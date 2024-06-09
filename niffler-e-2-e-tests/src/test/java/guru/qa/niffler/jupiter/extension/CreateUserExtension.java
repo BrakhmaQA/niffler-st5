@@ -1,6 +1,6 @@
 package guru.qa.niffler.jupiter.extension;
 
-import guru.qa.niffler.jupiter.annotation.TestUser;
+import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.UserJson;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -18,9 +18,9 @@ public abstract class CreateUserExtension implements BeforeEachCallback, Paramet
     public void beforeEach(ExtensionContext extensionContext) {
         AnnotationSupport.findAnnotation(
                 extensionContext.getRequiredTestMethod(),
-                TestUser.class
+                User.class
         ).ifPresent(
-                testUser -> {
+                user -> {
                     extensionContext.getStore(NAMESPACE)
                             .put(extensionContext.getUniqueId(), createUserForTest(UserJson.createRandomUser()));
                 }
