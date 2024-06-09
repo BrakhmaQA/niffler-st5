@@ -4,12 +4,15 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 
+import java.util.Date;
+
 import static com.codeborne.selenide.CollectionCondition.size;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
 public class MainPage extends BasePage<MainPage> {
+    private final ReactCalendar reactCalendar = new ReactCalendar();
     public static final String URL = CFG.frontUrl() + "main";
     private final SelenideElement profileAvatar = $(".header__avatar");
     private final ElementsCollection table = $(".spendings-table tbody").$$("tr");
@@ -42,6 +45,13 @@ public class MainPage extends BasePage<MainPage> {
     @Override
     public MainPage checkPageLoaded() {
         profileAvatar.shouldBe(visible);
+
+        return this;
+    }
+
+    @Step("Setting date in calendar")
+    public MainPage setData(Date date) {
+        reactCalendar.setData(date);
 
         return this;
     }
