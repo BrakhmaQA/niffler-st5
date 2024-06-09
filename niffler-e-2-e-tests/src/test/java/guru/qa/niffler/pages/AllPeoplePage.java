@@ -18,12 +18,14 @@ public class AllPeoplePage {
     @Step("Verifying whether the status is You are friends")
     public AllPeoplePage verifyYAFriendsStatusWith(String username) {
         peopleTable.find(text(username)).$(".abstract-table__buttons div").shouldHave(text("You are friends"));
+
         return this;
     }
 
     @Step("Verifying if there is a Submit button")
     public AllPeoplePage verifyASubmitButtonFrom(String username) {
         peopleTable.find(text(username)).$(".abstract-table__buttons div").should(Condition.attribute("data-tooltip-content", "Submit invitation"));
+
         return this;
     }
 

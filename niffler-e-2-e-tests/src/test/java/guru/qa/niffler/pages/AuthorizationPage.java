@@ -3,11 +3,14 @@ package guru.qa.niffler.pages;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 
+import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selectors.byTagAndText;
 import static com.codeborne.selenide.Selenide.$;
 
 
-public class AuthorizationPage {
+public class AuthorizationPage extends BasePage<AuthorizationPage> {
+    public static final String URL = CFG.frontUrl();
+    private final SelenideElement welcomeText = $(".main__header");
     private final SelenideElement logInButton = $(byTagAndText("a", "Login"));
     private final SelenideElement usernameField = $("input[name='username']");
     private final SelenideElement passwordField = $("input[name='password']");
@@ -35,5 +38,12 @@ public class AuthorizationPage {
     @Step("Click SignIn")
     public void clickSignInButton() {
         sigInButton.click();
+    }
+
+    @Override
+    public AuthorizationPage checkPageLoaded() {
+        welcomeText.should(text("Welcome to magic journey with Niffler. The coin keeper"));
+
+        return this;
     }
 }
