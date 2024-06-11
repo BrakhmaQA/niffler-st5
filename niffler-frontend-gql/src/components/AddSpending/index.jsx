@@ -111,7 +111,7 @@ export const AddSpending = ({categories, addSpendingCallback}) => {
             };
             addSpend({
                 variables: {
-                    generateSpend: dataToSend
+                    spend: dataToSend
                 }
             }).then(res => {
                 if (res.data?.addSpend != null) {

@@ -2,12 +2,7 @@ package guru.qa.niffler.jupiter.extension;
 
 import guru.qa.niffler.model.UserJson;
 import io.qameta.allure.Allure;
-import org.junit.jupiter.api.extension.AfterEachCallback;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.api.extension.ParameterContext;
-import org.junit.jupiter.api.extension.ParameterResolutionException;
-import org.junit.jupiter.api.extension.ParameterResolver;
+import org.junit.jupiter.api.extension.*;
 
 import java.util.Date;
 import java.util.Queue;
@@ -32,7 +27,6 @@ public class UserQueueExtension implements
         USERS.add(simpleUser("barsik", "12345"));
     }
 
-
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
         UserJson userForTest = null;
@@ -50,7 +44,6 @@ public class UserQueueExtension implements
         UserJson userFromTest = context.getStore(NAMESPACE).get(context.getUniqueId(), UserJson.class);
         USERS.add(userFromTest);
     }
-
 
     @Override
     public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
