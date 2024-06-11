@@ -1,11 +1,12 @@
 package guru.qa.niffler.test;
+
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.pages.AuthorizationPage;
-import guru.qa.niffler.pages.HeaderPage;
+import guru.qa.niffler.pages.MainPage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +16,7 @@ import static guru.qa.niffler.jupiter.annotation.User.Selector.INVITATION_SENT;
 @WebTest
 public class FriendInvitationSentTest {
     private final AuthorizationPage authorizationPage = new AuthorizationPage();
-    private final HeaderPage headerPage = new HeaderPage();
+    private final MainPage mainPage = new MainPage();
 
     static {
         Configuration.browserSize = "1920x1080";
@@ -33,19 +34,19 @@ public class FriendInvitationSentTest {
 
     @Test
     void userSentAnInvitationTest(@User(selector = INVITATION_RECEIVED) UserJson anotherUserForTest) {
-        headerPage.openAllPeoplePage()
+        mainPage.openAllPeoplePage()
                 .verifyPendingInvitationStatusFrom(anotherUserForTest.username());
     }
 
     @Test
     void userSentAnInvitationTest1(@User(selector = INVITATION_RECEIVED) UserJson anotherUserForTest) {
-        headerPage.openAllPeoplePage()
+        mainPage.openAllPeoplePage()
                 .verifyPendingInvitationStatusFrom(anotherUserForTest.username());
     }
 
     @Test
     void userSentAnInvitationTest2(@User(selector = INVITATION_RECEIVED) UserJson anotherUserForTest) {
-        headerPage.openAllPeoplePage()
+        mainPage.openAllPeoplePage()
                 .verifyPendingInvitationStatusFrom(anotherUserForTest.username());
     }
 }

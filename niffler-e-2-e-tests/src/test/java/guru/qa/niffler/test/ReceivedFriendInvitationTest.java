@@ -6,7 +6,7 @@ import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.pages.AuthorizationPage;
-import guru.qa.niffler.pages.HeaderPage;
+import guru.qa.niffler.pages.MainPage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +16,7 @@ import static guru.qa.niffler.jupiter.annotation.User.Selector.INVITATION_SENT;
 @WebTest
 public class ReceivedFriendInvitationTest {
     private final AuthorizationPage authorizationPage = new AuthorizationPage();
-    private final HeaderPage headerPage = new HeaderPage();
+    private final MainPage mainPage = new MainPage();
 
     static {
         Configuration.browserSize = "1920x1080";
@@ -34,33 +34,33 @@ public class ReceivedFriendInvitationTest {
 
     @Test
     void checkingFriendInvitationReceiveTest(@User(selector = INVITATION_SENT) UserJson anotherUserForTest) {
-        headerPage.openAllPeoplePage()
+        mainPage.openAllPeoplePage()
                 .verifyASubmitButtonFrom(anotherUserForTest.username())
                 .verifyADeclineButtonFrom(anotherUserForTest.username());
 
-        headerPage.openFriendsPage()
+        mainPage.openFriendsPage()
                 .verifyASubmitButtonFrom(anotherUserForTest.username())
                 .verifyADeclineButtonFrom(anotherUserForTest.username());
     }
 
     @Test
     void checkingFriendInvitationReceiveTest1(@User(selector = INVITATION_SENT) UserJson anotherUserForTest) {
-        headerPage.openAllPeoplePage()
+        mainPage.openAllPeoplePage()
                 .verifyASubmitButtonFrom(anotherUserForTest.username())
                 .verifyADeclineButtonFrom(anotherUserForTest.username());
 
-        headerPage.openFriendsPage()
+        mainPage.openFriendsPage()
                 .verifyASubmitButtonFrom(anotherUserForTest.username())
                 .verifyADeclineButtonFrom(anotherUserForTest.username());
     }
 
     @Test
     void checkingFriendInvitationReceiveTest2(@User(selector = INVITATION_SENT) UserJson anotherUserForTest) {
-        headerPage.openAllPeoplePage()
+        mainPage.openAllPeoplePage()
                 .verifyASubmitButtonFrom(anotherUserForTest.username())
                 .verifyADeclineButtonFrom(anotherUserForTest.username());
 
-        headerPage.openFriendsPage()
+        mainPage.openFriendsPage()
                 .verifyASubmitButtonFrom(anotherUserForTest.username())
                 .verifyADeclineButtonFrom(anotherUserForTest.username());
     }

@@ -1,6 +1,8 @@
 package guru.qa.niffler.jupiter.extension;
 
+import guru.qa.niffler.api.ApiClient;
 import guru.qa.niffler.api.SpendApi;
+import guru.qa.niffler.api.SpendApiClient;
 import guru.qa.niffler.jupiter.annotation.Spend;
 import guru.qa.niffler.model.SpendJson;
 import okhttp3.OkHttpClient;
@@ -11,20 +13,10 @@ import java.io.IOException;
 import java.util.Date;
 
 public class SpendHttpExtension extends AbstractSpendExtension {
-
-    private static final OkHttpClient okHttpClient = new OkHttpClient.Builder()
-            .build();
-
-    private final Retrofit retrofit = new Retrofit.Builder()
-            .client(okHttpClient)
-            .baseUrl("http://127.0.0.1:8093/")
-            .addConverterFactory(JacksonConverterFactory.create())
-            .build();
+    private final SpendApiClient spendApiClient = new SpendApiClient("http://127.0.0.1:8093/", JacksonConverterFactory.create());
 
     @Override
     protected SpendJson createSpend(Spend spend) {
-        SpendApi spendApi = retrofit.create(SpendApi.class);
-
         SpendJson spendJson = new SpendJson(
                 null,
                 new Date(),
@@ -36,7 +28,7 @@ public class SpendHttpExtension extends AbstractSpendExtension {
         );
 
         try {
-            return spendApi.createSpend(spendJson).execute().body();
+            return spendApiClient.createSpend(spendJson);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

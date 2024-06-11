@@ -20,18 +20,18 @@ public class ReactCalendar extends BaseComponent<ReactCalendar> {
 
     public ReactCalendar setData(Date date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        dateFormat.format(date);
+        String formattedDate = dateFormat.format(date);
 
-        calendar.setValue(date.toString());
+        calendar.setValue(formattedDate);
 
         return this;
     }
 
     public ReactCalendar setDataByJsExecutor(Date date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        dateFormat.format(date);
+        String formattedDate = dateFormat.format(date);
 
-        jsExecutor.executeScript(String.format("document.getElementsByClassName(\".react-datepicker__input-container input\").setDate(\"%s\");", date));
+        jsExecutor.executeScript(String.format("document.getElementsByClassName(\".react-datepicker__input-container input\").setDate(\"%s\");", formattedDate));
 
         return this;
     }

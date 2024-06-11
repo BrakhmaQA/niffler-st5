@@ -13,6 +13,7 @@ import static com.codeborne.selenide.Selenide.$;
 
 public class MainPage extends BasePage<MainPage> {
     private final ReactCalendar reactCalendar = new ReactCalendar();
+    private final Header header = new Header();
     public static final String URL = CFG.frontUrl() + "main";
     private final SelenideElement profileAvatar = $(".header__avatar");
     private final ElementsCollection table = $(".spendings-table tbody").$$("tr");
@@ -54,5 +55,19 @@ public class MainPage extends BasePage<MainPage> {
         reactCalendar.setData(date);
 
         return this;
+    }
+
+    @Step("Open friends page")
+    public FriendsPage openFriendsPage() {
+        header.openFriendsPage();
+
+        return new FriendsPage();
+    }
+
+    @Step("Open all people page")
+    public AllPeoplePage openAllPeoplePage() {
+        header.openAllPeoplePage();
+
+        return new AllPeoplePage();
     }
 }

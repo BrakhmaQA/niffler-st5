@@ -1,14 +1,13 @@
 package guru.qa.niffler.config;
 
 public interface Config {
+    String docker = "docker";
+    String env = "test.env";
+
     static Config getInstance() {
-        if ("local".equals(System.getProperty("test.env", "local"))) {
-            return LocalConfig.instance;
-        } else if ("docker".equals(System.getProperty("test.env"))) {
-            return DockerConfig.instance;
-        } else {
-            throw new IllegalStateException("Can not find Config for given env");
-        }
+        return docker.equals(System.getProperty(env))
+                ? DockerConfig.instance
+                : LocalConfig.instance;
     }
 
     String frontUrl();

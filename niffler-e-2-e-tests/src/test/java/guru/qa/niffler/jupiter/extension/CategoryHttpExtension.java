@@ -1,13 +1,11 @@
 package guru.qa.niffler.jupiter.extension;
 
-import guru.qa.niffler.api.CategoryApi;
+import guru.qa.niffler.api.CategoryApiClient;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.model.CategoryJson;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
-
-import java.io.IOException;
 
 public class CategoryHttpExtension extends AbstractCategoryExtension {
 
@@ -20,10 +18,10 @@ public class CategoryHttpExtension extends AbstractCategoryExtension {
             .addConverterFactory(JacksonConverterFactory.create())
             .build();
 
+    private final CategoryApiClient categoryApiClient = new CategoryApiClient("http://127.0.0.1:8093/", JacksonConverterFactory.create());
+
     @Override
     protected CategoryJson createCategory(Category category) {
-        CategoryApi categoryApi = retrofit.create(CategoryApi.class);
-
         CategoryJson categoryJson = new CategoryJson(
                 null,
                 category.category(),
@@ -31,8 +29,8 @@ public class CategoryHttpExtension extends AbstractCategoryExtension {
         );
 
         try {
-            return categoryApi.createCategory(categoryJson).execute().body();
-        } catch (IOException e) {
+            return categoryApiClient.addCategory(categoryJson);
+        } catch (Exception e) {
             throw new RuntimeException();
         }
     }

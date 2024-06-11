@@ -6,7 +6,7 @@ import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.pages.AuthorizationPage;
-import guru.qa.niffler.pages.HeaderPage;
+import guru.qa.niffler.pages.MainPage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +16,7 @@ import static guru.qa.niffler.jupiter.annotation.User.Selector.WITH_FRIENDS;
 @WebTest
 public class FriendsWithTest {
     private final AuthorizationPage authorizationPage = new AuthorizationPage();
-    private final HeaderPage headerPage = new HeaderPage();
+    private final MainPage mainPage = new MainPage();
 
     static {
         Configuration.browserSize = "1920x1080";
@@ -34,28 +34,28 @@ public class FriendsWithTest {
 
     @Test
     void checkingYAFriendsStatusTest(@User(selector = ACCEPTED_FRIENDS) UserJson anotherUserForTest) {
-        headerPage.openAllPeoplePage()
+        mainPage.openAllPeoplePage()
                 .verifyYAFriendsStatusWith(anotherUserForTest.username());
 
-        headerPage.openFriendsPage()
+        mainPage.openFriendsPage()
                 .verifyYAFriendsStatusWith(anotherUserForTest.username());
     }
 
     @Test
     void checkingYAFriendsStatusTest1(@User(selector = ACCEPTED_FRIENDS) UserJson anotherUserForTest) {
-        headerPage.openAllPeoplePage()
+        mainPage.openAllPeoplePage()
                 .verifyYAFriendsStatusWith(anotherUserForTest.username());
 
-        headerPage.openFriendsPage()
+        mainPage.openFriendsPage()
                 .verifyYAFriendsStatusWith(anotherUserForTest.username());
     }
 
     @Test
     void checkingYAFriendsStatusTest2(@User(selector = ACCEPTED_FRIENDS) UserJson anotherUserForTest) {
-        headerPage.openAllPeoplePage()
+        mainPage.openAllPeoplePage()
                 .verifyYAFriendsStatusWith(anotherUserForTest.username());
 
-        headerPage.openFriendsPage()
+        mainPage.openFriendsPage()
                 .verifyYAFriendsStatusWith(anotherUserForTest.username());
     }
 }
