@@ -14,7 +14,7 @@ import static guru.qa.niffler.jupiter.annotation.User.Selector.INVITATION_RECEIV
 import static guru.qa.niffler.jupiter.annotation.User.Selector.INVITATION_SENT;
 
 @WebTest
-public class FriendInvitationSentTest {
+public class FriendInvitationSentTest extends BaseWebTest {
     private final AuthorizationPage authorizationPage = new AuthorizationPage();
     private final MainPage mainPage = new MainPage();
 
@@ -24,7 +24,7 @@ public class FriendInvitationSentTest {
 
     @BeforeEach
     void doLogin(@User(selector = INVITATION_SENT) UserJson userForTest) {
-        Selenide.open("http://127.0.0.1:3000/");
+        Selenide.open(CFG.frontUrl());
 
         authorizationPage.clickLogInButton()
                 .setUsername(userForTest.username())

@@ -9,11 +9,11 @@ import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
 @WebTest
-public class UsersQueueExampleTest {
+public class UsersQueueExampleTest extends BaseWebTest {
 
     @Test
     void loginTest0(UserJson testUser) {
-        Selenide.open("http://127.0.0.1:3000/");
+        Selenide.open(CFG.frontUrl());
         $("a[href*='redirect']").click();
         $("input[name='username']").setValue(testUser.username());
         $("input[name='password']").setValue(testUser.testData().password());
@@ -23,7 +23,7 @@ public class UsersQueueExampleTest {
 
     @Test
     void loginTest1(UserJson testUser) {
-        Selenide.open("http://127.0.0.1:3000/");
+        Selenide.open(CFG.frontUrl());
         $("a[href*='redirect']").click();
         $("input[name='username']").setValue(testUser.username());
         $("input[name='password']").setValue(testUser.testData().password());
@@ -33,7 +33,7 @@ public class UsersQueueExampleTest {
 
     @Test
     void loginTest2(UserJson testUser) {
-        Selenide.open("http://127.0.0.1:3000/");
+        Selenide.open(CFG.frontUrl());
         $("a[href*='redirect']").click();
         $("input[name='username']").setValue(testUser.username());
         $("input[name='password']").setValue(testUser.testData().password());
@@ -43,7 +43,7 @@ public class UsersQueueExampleTest {
 
     @Test
     void loginTest3(UserJson testUser) {
-        Selenide.open("http://127.0.0.1:3000/");
+        Selenide.open(CFG.frontUrl());
         $("a[href*='redirect']").click();
         $("input[name='username']").setValue(testUser.username());
         $("input[name='password']").setValue(testUser.testData().password());
@@ -53,7 +53,7 @@ public class UsersQueueExampleTest {
 
     @Test
     void loginTest4(UserJson testUser) {
-        Selenide.open("http://127.0.0.1:3000/");
+        Selenide.open(CFG.frontUrl());
         $("a[href*='redirect']").click();
         $("input[name='username']").setValue(testUser.username());
         $("input[name='password']").setValue(testUser.testData().password());
