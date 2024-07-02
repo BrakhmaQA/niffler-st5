@@ -14,7 +14,7 @@ import static guru.qa.niffler.jupiter.annotation.User.Selector.ACCEPTED_FRIENDS;
 import static guru.qa.niffler.jupiter.annotation.User.Selector.WITH_FRIENDS;
 
 @WebTest
-public class FriendsWithTest {
+public class FriendsWithTest extends BaseWebTest {
     private final AuthorizationPage authorizationPage = new AuthorizationPage();
     private final MainPage mainPage = new MainPage();
 
@@ -24,7 +24,7 @@ public class FriendsWithTest {
 
     @BeforeEach
     void doLogin(@User(selector = WITH_FRIENDS) UserJson userForTest) {
-        Selenide.open("http://127.0.0.1:3000/");
+        Selenide.open(CFG.frontUrl());
 
         authorizationPage.clickLogInButton()
                 .setUsername(userForTest.username())
