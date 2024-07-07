@@ -10,7 +10,7 @@ import io.qameta.allure.attachment.DefaultAttachmentProcessor;
 import io.qameta.allure.attachment.FreemarkerAttachmentRenderer;
 import org.apache.commons.lang3.StringUtils;
 
-public class AllureAppender extends StdoutLogger {
+public class AllureSqlAppender extends StdoutLogger {
     private final String templateName = "sql-query.ftl";
     private final AttachmentProcessor<AttachmentData> processor = new DefaultAttachmentProcessor();
 
