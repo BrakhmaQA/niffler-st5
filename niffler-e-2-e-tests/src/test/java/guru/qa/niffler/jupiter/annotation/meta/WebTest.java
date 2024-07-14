@@ -1,5 +1,6 @@
 package guru.qa.niffler.jupiter.annotation.meta;
 
+import guru.qa.niffler.jupiter.extension.ApiLoginExtension;
 import guru.qa.niffler.jupiter.extension.BrowserExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -11,8 +12,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @ExtendWith({
-        BrowserExtension.class
-
+        BrowserExtension.class,
+        ApiLoginExtension.class
 })
 public @interface WebTest {
 }

@@ -21,4 +21,14 @@ public class DockerConfig implements Config {
     public String dbHost() {
         return "niffler-all-db";
     }
+
+    @Override
+    public String authUrl() {
+        return null;
+    }
+
+    @Override
+    public int dbPort() {
+        return Config.super.dbPort();
+    }
 }
